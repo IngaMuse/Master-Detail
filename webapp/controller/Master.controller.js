@@ -12,12 +12,11 @@ sap.ui.define([
 		onInit: function () {
 			this.oView = this.getView();
 			this._bDescendingSort = false;
-			this.oProductsTable = this.oView.byId("productsTable");
+			this.oItemsTable = this.oView.byId("itemsTable");
+			this.oModel = this.getOwnerComponent().getModel("items");
 			this.oRouter = this.getOwnerComponent().getRouter();
 		},
 			
-
-
 		onSearch: function (oEvent) {
 			var oTableSearchState = [],
 				sQuery = oEvent.getParameter("query");
@@ -26,7 +25,7 @@ sap.ui.define([
 				oTableSearchState = [new Filter("Name", FilterOperator.Contains, sQuery)];
 			}
 
-			this.oProductsTable.getBinding("items").filter(oTableSearchState, "Application");
+			this.oItemsTable.getBinding("items").filter(oTableSearchState, "Application");
 		},
 
 		onAdd: function () {
@@ -35,7 +34,7 @@ sap.ui.define([
 
 		onSort: function () {
 			this._bDescendingSort = !this._bDescendingSort;
-			var oBinding = this.oProductsTable.getBinding("items"),
+			var oBinding = this.oItemsTable.getBinding("items"),
 				oSorter = new Sorter("Name", this._bDescendingSort);
 
 			oBinding.sort(oSorter);
