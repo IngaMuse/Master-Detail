@@ -36,7 +36,7 @@ sap.ui.define([
 
 		// Update the close/fullscreen buttons visibility
 		_updateUIElements: function () {
-			var oModel = this.oOwnerComponent.getModel(),
+			var oModel = this.oOwnerComponent.getModel("component"),
 				oUIState;
 			this.oOwnerComponent.getHelper().then(function(oHelper) {
 				oUIState = oHelper.getCurrentUIState();

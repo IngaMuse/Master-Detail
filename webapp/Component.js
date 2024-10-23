@@ -21,10 +21,10 @@ sap.ui.define([
 					loadMetadataAsync: true
 				})
 			this.setModel(oModel, "items");
-			const oViewModel = new JSONModel({});
-			this.setModel(oViewModel, "ItemsView");
-			// oRouter = this.getRouter();
-			// oRouter.attachBeforeRouteMatched(this._onBeforeRouteMatched, this);
+			const oItemModel = new JSONModel();
+			this.setModel(oItemModel, "component");
+			const oRouter = this.getRouter();
+			oRouter.attachBeforeRouteMatched(this._onBeforeRouteMatched, this);
 			this.getRouter().initialize();		
 		},
 
@@ -41,7 +41,7 @@ sap.ui.define([
 		},
 
 		_onBeforeRouteMatched: function(oEvent) {
-			var oModel = this.getModel(),
+			var oModel = this.getModel("component"),
 				sLayout = oEvent.getParameters().arguments.layout,
 				oNextUIState;
 

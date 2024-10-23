@@ -14,9 +14,29 @@ sap.ui.define([
 			this._bDescendingSort = false;
 			this.oItemsTable = this.oView.byId("itemsTable");
 			this.oModel = this.getOwnerComponent().getModel("items");
+			this.oItemModel = this.getOwnerComponent().getModel("component");
 			this.oRouter = this.getOwnerComponent().getRouter();
+
+			const oViewModel = new JSONModel({
+				sCount: "0",
+			});
+			this.getView().setModel(oViewModel, "masterView");
 		},
 			
+
+		onBeforeRendering: function () {
+			this._getTableCounter();
+		},
+
+		_getTableCounter() {
+			this.oModel.read("/zjblessons_base_Items/$count", {
+				success: (sCount) => {
+					this.getView().getModel("masterView").setProperty("/sCount", sCount);
+				},
+			});
+		},
+
+
 		onSearch: function (oEvent) {
 			var oTableSearchState = [],
 				sQuery = oEvent.getParameter("query");
@@ -41,10 +61,11 @@ sap.ui.define([
 		},
 
 		onListItemPress: function (oEvent) {
-			var productPath = oEvent.getSource().getBindingContext("products").getPath(),
+			var productPath = oEvent.getSource().getBindingContext().getPath(),
 				product = productPath.split("/").slice(-1).pop(),
 				oNextUIState;
 			this.getOwnerComponent().getHelper().then(function (oHelper) {
+				debugger;
 				oNextUIState = oHelper.getNextUIState(1);
 				this.oRouter.navTo("detail", {
 					layout: oNextUIState.layout,

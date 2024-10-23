@@ -8,7 +8,7 @@
 		<f:title>
 			<f:DynamicPageTitle>
 				<f:heading>
-					<Title text="Items ({products>/ProductCollectionStats/Counts/Total})"/>
+					<Title text="Items ({= ${masterView>/sCount}})"/>
 				</f:heading>
 			</f:DynamicPageTitle>
 		</f:title>
