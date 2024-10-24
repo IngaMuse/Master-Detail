@@ -2,7 +2,6 @@
 	controllerName="sap.ui.demo.fiori2.controller.Detail"
 	xmlns="sap.uxap"
 	xmlns:m="sap.m"
-	xmlns:f="sap.f"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
 	<ObjectPageLayout
@@ -16,18 +15,13 @@
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<expandedHeading>
-					<m:Title text="{products>Name}" wrapping="true" class="sapUiSmallMarginEnd"/>
+					<m:Title text="{ItemID}" wrapping="true" class="sapUiSmallMarginEnd"/>
 				</expandedHeading>
 
 				<snappedHeading>
 					<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
 						<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
-							<f:Avatar
-								src="https://sdk.openui5.org/{products>ProductPicUrl}"
-								displaySize="S"
-								displayShape="Square"
-								class="sapUiTinyMarginEnd"/>
-							<m:Title text="{products>Name}" wrapping="true"/>
+							<m:Title text="{ItemID}" wrapping="true"/>
 						</m:FlexBox>
 					</m:FlexBox>
 				</snappedHeading>
@@ -73,28 +67,33 @@
 
 		<headerContent>
 			<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Stretch">
-				<f:Avatar
-					src="https://sdk.openui5.org/{products>ProductPicUrl}"
-					displaySize="L"
-					displayShape="Square"
-					class="sapUiTinyMarginEnd">
-				</f:Avatar>
 				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
-					<m:Label text="Main Category"/>
-					<m:Text text="{products>MainCategory}"/>
+					<m:Label text="MaterialID"/>
+					<m:Text text="{items>MaterialID}"/>
 				</m:VBox>
 				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
-					<m:Label text="Subcategory"/>
-					<m:Text text="{products>Category}"/>
+					<m:Label text="GroupID"/>
+					<m:Text text="{items>GroupID}"/>
 				</m:VBox>
 				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
 					<m:Label text="Price"/>
-					<m:ObjectNumber number="{products>CurrencyCode} {products>Price}" emphasized="false"/>
+					<m:ObjectNumber number="{items>Price} EUR" emphasized="false"/>
+				</m:VBox>
+				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
+					<m:Label text="Quantity"/>
+					<m:ObjectNumber number="{items>Quantity}" emphasized="false"/>
+				</m:VBox>
+				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
+					<m:Label text="Amount"/>
+					<m:ObjectNumber number="{ parts: [
+      { path: 'items>Price' },
+      { path: 'items>Quantity' }
+    ], formatter: '.formatter.calculatePriceQuantity'}" emphasized="false"/>
 				</m:VBox>
 			</m:FlexBox>
 		</headerContent>
 
-		<sections>
+		<!-- <sections>
 			<ObjectPageSection title="General Information">
 				<subSections>
 					<ObjectPageSubSection>
@@ -145,7 +144,7 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-		</sections>
+		</sections> -->
 
 		<footer>
 			<m:OverflowToolbar>

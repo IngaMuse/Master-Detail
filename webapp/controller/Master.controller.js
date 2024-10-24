@@ -65,7 +65,6 @@ sap.ui.define([
 				product = productPath.split("/").slice(-1).pop(),
 				oNextUIState;
 			this.getOwnerComponent().getHelper().then(function (oHelper) {
-				debugger;
 				oNextUIState = oHelper.getNextUIState(1);
 				this.oRouter.navTo("detail", {
 					layout: oNextUIState.layout,
