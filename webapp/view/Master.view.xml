@@ -8,7 +8,7 @@
 		<f:title>
 			<f:DynamicPageTitle>
 				<f:heading>
-					<Title text="Products ({products>/ProductCollectionStats/Counts/Total})"/>
+					<Title text="Items ({= ${masterView>/sCount}})"/>
 				</f:heading>
 			</f:DynamicPageTitle>
 		</f:title>
@@ -23,12 +23,12 @@
 					<OverflowToolbarButton icon="sap-icon://sort" text="Sort" type="Transparent" press=".onSort"/>
 				</OverflowToolbar>
 				<Table
-					id="productsTable"
+					id="itemsTable"
 					inset="false"
 					items="{
-						path: 'products>/ProductCollection',
+						path: '/zjblessons_base_Items',
 						sorter: {
-							path: 'Name'
+							path: 'ItemID'
 						}
 					}"
 					class="sapFDynamicPageAlignContent"
@@ -44,17 +44,10 @@
 					<items>
 						<ColumnListItem type="Navigation" press=".onListItemPress">
 							<cells>
-								<ObjectIdentifier title="{products>Name}" text="{products>ProductId}"/>
+								<ObjectIdentifier title="{ItemID}" text="{HeaderID}"/>
 								<ObjectNumber
-									number="{
-										parts:[
-											{path:'products>Price'},
-											{path:'products>CurrencyCode'}
-										],
-										type: 'sap.ui.model.type.Currency',
-										formatOptions: {showMeasure: false}
-									}"
-									unit="{products>CurrencyCode}"/>
+								number="{Price}" 
+									unit="EUR"/>
 							</cells>
 						</ColumnListItem>
 					</items>

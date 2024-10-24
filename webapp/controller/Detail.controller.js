@@ -1,22 +1,27 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function (Controller) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/demo/fiori2/model/formatter" 
+], function (Controller, formatter) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.fiori2.controller.Detail", {
+		formatter: formatter,
 		onInit: function () {
 			this.oOwnerComponent = this.getOwnerComponent();
-
 			this.oRouter = this.oOwnerComponent.getRouter();
-			this.oModel = this.oOwnerComponent.getModel();
+			this.oModel = this.oOwnerComponent.getModel("items");
 
 			this.oRouter.getRoute("master").attachPatternMatched(this._onProductMatched, this);
 			this.oRouter.getRoute("detail").attachPatternMatched(this._onProductMatched, this);
 			this.oRouter.getRoute("detailDetail").attachPatternMatched(this._onProductMatched, this);
 		},
 
+	// 	formatPriceQuantity: function(price, quantity) {
+	// 		return price * quantity;
+	// },
+
 		onSupplierPress: function (oEvent) {
-			var supplierPath = oEvent.getSource().getBindingContext("products").getPath(),
+			var supplierPath = oEvent.getSource().getBindingContext("items").getPath(),
 				supplier = supplierPath.split("/").slice(-1).pop(),
 				oNextUIState;
 
@@ -31,11 +36,20 @@ sap.ui.define([
 		},
 
 		_onProductMatched: function (oEvent) {
-			this._product = oEvent.getParameter("arguments").product || this._product || "0";
-			this.getView().bindElement({
-				path: "/ProductCollection/" + this._product,
-				model: "products"
-			});
+			this._product = oEvent.getParameter("arguments").product || this._product || "0";			
+				this.getView().bindElement({
+					path: "/" + this._product,
+					model: "items"
+				});	
+			// const sPath = "/" + this._product;
+			// this.oModel.read(sPath, {
+			// 	success: function (oData) {
+			// 			console.log("Данные продукта: ", oData);
+			// 	},
+			// 	error: function (oError) {
+			// 			console.error("Ошибка при загрузке данных: ", oError);
+			// 	}
+			// });
 		},
 
 		onEditToggleButtonPress: function() {

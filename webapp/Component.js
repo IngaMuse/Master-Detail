@@ -2,8 +2,9 @@ sap.ui.define([
 	'sap/ui/core/UIComponent',
 	'sap/ui/model/json/JSONModel',
 	'sap/f/FlexibleColumnLayoutSemanticHelper',
-	'sap/f/library'
-], function(UIComponent, JSONModel, FlexibleColumnLayoutSemanticHelper, fioriLibrary) {
+	'sap/f/library',
+	'sap/ui/model/odata/v2/ODataModel',
+], function(UIComponent, JSONModel, FlexibleColumnLayoutSemanticHelper, fioriLibrary, ODataModel) {
 	'use strict';
 
 	return UIComponent.extend('sap.ui.demo.fiori2.Component', {
@@ -12,24 +13,19 @@ sap.ui.define([
 			manifest: 'json'
 		},
 
-		init: function () {
-			var oModel,
-				oProductsModel,
-				oRouter;
-
+		init : function () {	
 			UIComponent.prototype.init.apply(this, arguments);
-
-			oModel = new JSONModel();
-			this.setModel(oModel);
-
-			// set products demo model on this sample
-			oProductsModel = new JSONModel(sap.ui.require.toUrl('sap/ui/demo/mock/products.json'));
-			oProductsModel.setSizeLimit(1000);
-			this.setModel(oProductsModel, 'products');
-
-			oRouter = this.getRouter();
+			const sServiceUrl = this.getManifestEntry("sap.app").dataSources.mainService.uri,
+				oModel = new ODataModel(sServiceUrl, {
+					json: true,
+					loadMetadataAsync: true
+				})
+			this.setModel(oModel, "items");
+			const oItemModel = new JSONModel();
+			this.setModel(oItemModel, "component");
+			const oRouter = this.getRouter();
 			oRouter.attachBeforeRouteMatched(this._onBeforeRouteMatched, this);
-			oRouter.initialize();
+			this.getRouter().initialize();		
 		},
 
 		getHelper: function () {
@@ -41,11 +37,11 @@ sap.ui.define([
 					maxColumnsCount: 2
 				};
 				return (FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL, oSettings));
-			 });
+			});
 		},
 
 		_onBeforeRouteMatched: function(oEvent) {
-			var oModel = this.getModel(),
+			var oModel = this.getModel("component"),
 				sLayout = oEvent.getParameters().arguments.layout,
 				oNextUIState;
 
