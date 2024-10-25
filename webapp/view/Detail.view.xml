@@ -166,13 +166,6 @@
 				</subSections>
 			</ObjectPageSection>
 		</sections>
-
-		<footer>
-			<m:OverflowToolbar>
-				<m:ToolbarSpacer/>
-				<m:Button type="Accept" text="Save"/>
-				<m:Button type="Reject" text="Cancel"/>
-			</m:OverflowToolbar>
-		</footer>
+		
 	</ObjectPageLayout>
 </mvc:View>

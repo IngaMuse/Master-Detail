@@ -44,8 +44,6 @@ sap.ui.define([
 			var oModel = this.getModel("component"),
 				sLayout = oEvent.getParameters().arguments.layout,
 				oNextUIState;
-
-			// If there is no layout parameter, query for the default level 0 layout (normally OneColumn)
 			if (!sLayout) {
 				this.getHelper().then(function(oHelper) {
 					oNextUIState = oHelper.getNextUIState(0);
@@ -53,7 +51,6 @@ sap.ui.define([
 				});
 				return;
 			}
-
 			oModel.setProperty("/layout", sLayout);
 		},
 
@@ -67,7 +64,6 @@ sap.ui.define([
 					return;
 				}
 				resolve(oFCL);
-
 			}.bind(this));
 		}
 	});

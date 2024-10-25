@@ -1,12 +1,12 @@
-sap.ui.define([], function() {
+sap.ui.define([], function () {
   "use strict";
 
   return {
     calculatePriceQuantity: function (price, quantity) {
-          if (price && quantity) {
-              return price * quantity + " EUR";
+      if (price && quantity) {
+        return price * quantity + " EUR";
       }
-          return "0 EUR";    
+      return "0 EUR";
     },
   };
 });
