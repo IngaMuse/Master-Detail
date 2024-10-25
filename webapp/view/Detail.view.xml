@@ -48,10 +48,10 @@
 				</navigationActions>
 
 				<actions>
-					<m:ToggleButton
-						text="Edit"
+					<m:Button
+						text="Стоимость BYN"
 						type="Emphasized"
-						press=".onEditToggleButtonPress"/>
+						press="onAmountBYNButtonPress"/>
 				</actions>
 			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>
@@ -76,7 +76,7 @@
 				</m:VBox>
 				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
 					<m:Label text="Amount"/>
-					<m:ObjectNumber number="{ parts: [ { path: 'items>Price' }, { path: 'items>Quantity' } ], formatter: '.formatter.calculatePriceQuantity'}" emphasized="false"/>
+					<m:ObjectNumber id="AmountID" number="{ parts: [ { path: 'items>Price' }, { path: 'items>Quantity' } ], formatter: '.formatter.calculatePriceQuantity'}" emphasized="false"/>
 				</m:VBox>
 			</m:FlexBox>
 		</headerContent>
@@ -165,29 +165,6 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-
-			<!-- <ObjectPageSection title="Group">
-				<subSections>
-					<ObjectPageSubSection>
-						<blocks>
-							<m:Table
-								id="suppliersTable"
-								items="{path : 'products>/ProductCollectionStats/Filters/1/values'}">
-								<m:columns>
-									<m:Column/>
-								</m:columns>
-								<m:items>
-									<m:ColumnListItem type="Navigation" press=".onSupplierPress">
-										<m:cells>
-											<m:ObjectIdentifier text="{items>HeaderID}"/>
-										</m:cells>
-									</m:ColumnListItem>
-								</m:items>
-							</m:Table>
-						</blocks>
-					</ObjectPageSubSection>
-				</subSections>
-			</ObjectPageSection> -->
 		</sections>
 
 		<footer>

@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
+	"sap/m/MessageToast",
 	"sap/ui/demo/fiori2/model/formatter" 
-], function (Controller, JSONModel, formatter) {
+], function (Controller, JSONModel, MessageToast, formatter) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.fiori2.controller.Detail", {
@@ -96,10 +97,29 @@ sap.ui.define([
 			});
 		},
 
-		onEditToggleButtonPress: function() {
-			var oObjectPage = this.getView().byId("ObjectPageLayout"),
-				bCurrentShowFooterState = oObjectPage.getShowFooter();
-			oObjectPage.setShowFooter(!bCurrentShowFooterState);
+		onAmountBYNButtonPress: function () {
+			const objectNumber = this.getView().byId("AmountID");
+			const euroAmount = objectNumber.getNumber().slice(0, -4);
+			this.convertCurrency(euroAmount);			
+		},
+
+		convertCurrency: function (euroAmount) {
+			const oModel = this.getView().getModel("detailView");
+			const sUrl = "https://www.nbrb.by/api/exrates/rates/EUR?parammode=2";
+			oModel.loadData(sUrl);
+			oModel.attachRequestCompleted(function (oEvent) {
+					const data = oModel.getData();
+					if (data && data.Cur_OfficialRate) {
+							var rate = data.Cur_OfficialRate;
+							var bynAmount = euroAmount * rate;
+							MessageToast.show("Стоимость всех товаров в белорусских рублях: " + bynAmount.toFixed(2), { at:"center center" });
+					} else {
+							MessageToast.show("Ошибка получения курса.");
+					}
+			});
+			oModel.attachRequestFailed(function () {
+					MessageToast.show("Ошибка при обращении к API НБРБ.");
+			});
 		},
 
 		handleFullScreen: function () {
