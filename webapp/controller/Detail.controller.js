@@ -36,6 +36,9 @@ sap.ui.define(
           sGroupDescription: "",
         });
         this.getView().setModel(oViewModel, "detailView");
+        
+        const oCurrencyModel = new JSONModel();
+        this.getView().setModel(oCurrencyModel, "currencyData");
       },
 
       _onProductMatched: function (oEvent) {
@@ -129,13 +132,13 @@ sap.ui.define(
       onAmountBYNButtonPress: function () {
         const objectNumber = this.getView().byId("AmountID");
         const euroAmount = objectNumber.getNumber().slice(0, -4);
-        this.convertCurrency(euroAmount);
+        this._convertCurrency(euroAmount);
       },
 
-      convertCurrency: function (euroAmount) {
-        const oModel = this.getView().getModel("detailView");
+      _convertCurrency: function (euroAmount) {
+        const oModel = this.getView().getModel("currencyData");
         const sUrl = "https://www.nbrb.by/api/exrates/rates/EUR?parammode=2";
-        oModel.loadData(sUrl);
+        oModel.loadData(sUrl);   
         oModel.attachRequestCompleted(function (oEvent) {
           const data = oModel.getData();
           if (data && data.Cur_OfficialRate) {
