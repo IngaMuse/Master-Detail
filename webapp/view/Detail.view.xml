@@ -15,13 +15,13 @@
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<expandedHeading>
-					<m:Title text="{ItemID}" wrapping="true" class="sapUiSmallMarginEnd"/>
+					<m:Title text="{items>ItemID}" wrapping="true" class="sapUiSmallMarginEnd"/>
 				</expandedHeading>
 
 				<snappedHeading>
 					<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
 						<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
-							<m:Title text="{ItemID}" wrapping="true"/>
+							<m:Title text="{items>ItemID}" wrapping="true"/>
 						</m:FlexBox>
 					</m:FlexBox>
 				</snappedHeading>
@@ -52,15 +52,6 @@
 						text="Edit"
 						type="Emphasized"
 						press=".onEditToggleButtonPress"/>
-					<m:Button
-						text="Delete"
-						type="Transparent"/>
-					<m:Button
-						text="Copy"
-						type="Transparent"/>
-					<m:Button
-						icon="sap-icon://action"
-						type="Transparent"/>
 				</actions>
 			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>
@@ -85,16 +76,13 @@
 				</m:VBox>
 				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
 					<m:Label text="Amount"/>
-					<m:ObjectNumber number="{ parts: [
-      { path: 'items>Price' },
-      { path: 'items>Quantity' }
-    ], formatter: '.formatter.calculatePriceQuantity'}" emphasized="false"/>
+					<m:ObjectNumber number="{ parts: [ { path: 'items>Price' }, { path: 'items>Quantity' } ], formatter: '.formatter.calculatePriceQuantity'}" emphasized="false"/>
 				</m:VBox>
 			</m:FlexBox>
 		</headerContent>
 
-		<!-- <sections>
-			<ObjectPageSection title="General Information">
+		<sections>
+			<ObjectPageSection title="Header">
 				<subSections>
 					<ObjectPageSubSection>
 						<blocks>
@@ -109,12 +97,12 @@
 								columnsL="1"
 								columnsM="1">
 								<form:content>
-									<m:Label text="Product ID"/>
-									<m:Text text="{products>ProductId}"/>
-									<m:Label text="Description"/>
-									<m:Text text="{products>Description}"/>
-									<m:Label text="Supplier"/>
-									<m:Text text="{products>SupplierName}"/>
+									<m:Label text="Header ID"/>
+									<m:Text text="{items>HeaderID}"/>
+									<m:Label text="Document Number"/>
+									<m:Text text="{detailView>/sDocumentNumber}"/>
+									<m:Label text="Document Date"/>
+									<m:Text text="{detailView>/sDocumentDate}"/>
 								</form:content>
 							</form:SimpleForm>
 						</blocks>
@@ -122,7 +110,63 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Suppliers">
+			<ObjectPageSection title="Material">
+				<subSections>
+					<ObjectPageSubSection>
+						<blocks>
+							<form:SimpleForm
+								maxContainerCols="2"
+								editable="false"
+								layout="ResponsiveGridLayout"
+								labelSpanL="12"
+								labelSpanM="12"
+								emptySpanL="0"
+								emptySpanM="0"
+								columnsL="1"
+								columnsM="1">
+								<form:content>
+									<m:Label text="Material ID"/>
+									<m:Text text="{items>MaterialID}"/>
+									<m:Label text="Material Text"/>
+									<m:Text text="{detailView>/sMaterialText}"/>
+									<m:Label text="Material Description"/>
+									<m:Text text="{detailView>/sMaterialDescription}"/>
+								</form:content>
+							</form:SimpleForm>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Group">
+				<subSections>
+					<ObjectPageSubSection>
+						<blocks>
+							<form:SimpleForm
+								maxContainerCols="2"
+								editable="false"
+								layout="ResponsiveGridLayout"
+								labelSpanL="12"
+								labelSpanM="12"
+								emptySpanL="0"
+								emptySpanM="0"
+								columnsL="1"
+								columnsM="1">
+								<form:content>
+									<m:Label text="Group ID"/>
+									<m:Text text="{items>GroupID}"/>
+									<m:Label text="Group Text"/>
+									<m:Text text="{detailView>/sGroupText}"/>
+									<m:Label text="Group Description"/>
+									<m:Text text="{detailView>/sGroupDescription}"/>
+								</form:content>
+							</form:SimpleForm>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<!-- <ObjectPageSection title="Group">
 				<subSections>
 					<ObjectPageSubSection>
 						<blocks>
@@ -135,7 +179,7 @@
 								<m:items>
 									<m:ColumnListItem type="Navigation" press=".onSupplierPress">
 										<m:cells>
-											<m:ObjectIdentifier text="{products>text}"/>
+											<m:ObjectIdentifier text="{items>HeaderID}"/>
 										</m:cells>
 									</m:ColumnListItem>
 								</m:items>
@@ -143,8 +187,8 @@
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>
-			</ObjectPageSection>
-		</sections> -->
+			</ObjectPageSection> -->
+		</sections>
 
 		<footer>
 			<m:OverflowToolbar>

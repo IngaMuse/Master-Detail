@@ -23,7 +23,6 @@ sap.ui.define([
 			this.getView().setModel(oViewModel, "masterView");
 		},
 			
-
 		onBeforeRendering: function () {
 			this._getTableCounter();
 		},
@@ -61,8 +60,8 @@ sap.ui.define([
 		},
 
 		onListItemPress: function (oEvent) {
-			var productPath = oEvent.getSource().getBindingContext().getPath(),
-				product = productPath.split("/").slice(-1).pop(),
+			var itemPath = oEvent.getSource().getBindingContext().getPath(),
+				product = itemPath.split("/").slice(-1).pop(),
 				oNextUIState;
 			this.getOwnerComponent().getHelper().then(function (oHelper) {
 				oNextUIState = oHelper.getNextUIState(1);

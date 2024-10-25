@@ -25,7 +25,7 @@ sap.ui.define([
 			this.setModel(oItemModel, "component");
 			const oRouter = this.getRouter();
 			oRouter.attachBeforeRouteMatched(this._onBeforeRouteMatched, this);
-			this.getRouter().initialize();		
+			oRouter.initialize();		
 		},
 
 		getHelper: function () {
