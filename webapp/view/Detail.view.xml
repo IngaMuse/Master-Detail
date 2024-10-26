@@ -102,7 +102,7 @@
 									<m:Label text="Document Number"/>
 									<m:Text text="{detailView>/sDocumentNumber}"/>
 									<m:Label text="Document Date"/>
-									<m:Text text="{detailView>/sDocumentDate}"/>
+									<m:Text text="{path: 'detailView>/sDocumentDate', formatter: '.formatter.formatDate'}"/>
 								</form:content>
 							</form:SimpleForm>
 						</blocks>

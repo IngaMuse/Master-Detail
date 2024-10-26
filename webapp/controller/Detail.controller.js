@@ -114,6 +114,9 @@ sap.ui.define(
         const sPathDataField = `/${sObjectPath}/${sDataField}`;
         this._getDetailDataObject(sPathDataField)
           .then((oData) => {
+            if (oData.startsWith("/Date(")) {
+              oData = this._parseDate(oData);
+            }
             this.getView()
               .getModel("detailView")
               .setProperty(`/s${sDataField}`, oData);
@@ -127,6 +130,17 @@ sap.ui.define(
               .getModel("detailView")
               .setProperty(`/s${sDataField}`, "");
           });
+      },
+
+      _parseDate(dateString) {
+        const match = dateString.match(/Date\((\d+)/);
+        if (match) {
+            const milliseconds = parseInt(match[1], 10);
+            return new Date(milliseconds);
+        } else {
+            console.error('Invalid date format:', dateString);
+            return null; 
+        }
       },
 
       onAmountBYNButtonPress: function () {
