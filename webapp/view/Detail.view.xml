@@ -2,7 +2,6 @@
 	controllerName="sap.ui.demo.fiori2.controller.Detail"
 	xmlns="sap.uxap"
 	xmlns:m="sap.m"
-	xmlns:f="sap.f"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
 	<ObjectPageLayout
@@ -16,18 +15,13 @@
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<expandedHeading>
-					<m:Title text="{products>Name}" wrapping="true" class="sapUiSmallMarginEnd"/>
+					<m:Title text="{items>ItemID}" wrapping="true" class="sapUiSmallMarginEnd"/>
 				</expandedHeading>
 
 				<snappedHeading>
 					<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
 						<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
-							<f:Avatar
-								src="https://sdk.openui5.org/{products>ProductPicUrl}"
-								displaySize="S"
-								displayShape="Square"
-								class="sapUiTinyMarginEnd"/>
-							<m:Title text="{products>Name}" wrapping="true"/>
+							<m:Title text="{items>ItemID}" wrapping="true"/>
 						</m:FlexBox>
 					</m:FlexBox>
 				</snappedHeading>
@@ -54,48 +48,41 @@
 				</navigationActions>
 
 				<actions>
-					<m:ToggleButton
-						text="Edit"
+					<m:Button
+						text="Стоимость BYN"
 						type="Emphasized"
-						press=".onEditToggleButtonPress"/>
-					<m:Button
-						text="Delete"
-						type="Transparent"/>
-					<m:Button
-						text="Copy"
-						type="Transparent"/>
-					<m:Button
-						icon="sap-icon://action"
-						type="Transparent"/>
+						press="onAmountBYNButtonPress"/>
 				</actions>
 			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>
 
 		<headerContent>
 			<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Stretch">
-				<f:Avatar
-					src="https://sdk.openui5.org/{products>ProductPicUrl}"
-					displaySize="L"
-					displayShape="Square"
-					class="sapUiTinyMarginEnd">
-				</f:Avatar>
 				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
-					<m:Label text="Main Category"/>
-					<m:Text text="{products>MainCategory}"/>
+					<m:Label text="MaterialID"/>
+					<m:Text text="{items>MaterialID}"/>
 				</m:VBox>
 				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
-					<m:Label text="Subcategory"/>
-					<m:Text text="{products>Category}"/>
+					<m:Label text="GroupID"/>
+					<m:Text text="{items>GroupID}"/>
 				</m:VBox>
 				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
 					<m:Label text="Price"/>
-					<m:ObjectNumber number="{products>CurrencyCode} {products>Price}" emphasized="false"/>
+					<m:ObjectNumber number="{items>Price} EUR" emphasized="false"/>
+				</m:VBox>
+				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
+					<m:Label text="Quantity"/>
+					<m:ObjectNumber number="{items>Quantity}" emphasized="false"/>
+				</m:VBox>
+				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
+					<m:Label text="Amount"/>
+					<m:ObjectNumber id="AmountID" number="{ parts: [ { path: 'items>Price' }, { path: 'items>Quantity' } ], formatter: '.formatter.calculatePriceQuantity'}" emphasized="false"/>
 				</m:VBox>
 			</m:FlexBox>
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection title="General Information">
+			<ObjectPageSection title="Header">
 				<subSections>
 					<ObjectPageSubSection>
 						<blocks>
@@ -110,12 +97,12 @@
 								columnsL="1"
 								columnsM="1">
 								<form:content>
-									<m:Label text="Product ID"/>
-									<m:Text text="{products>ProductId}"/>
-									<m:Label text="Description"/>
-									<m:Text text="{products>Description}"/>
-									<m:Label text="Supplier"/>
-									<m:Text text="{products>SupplierName}"/>
+									<m:Label text="Header ID"/>
+									<m:Text text="{items>HeaderID}"/>
+									<m:Label text="Document Number"/>
+									<m:Text text="{detailView>/sDocumentNumber}"/>
+									<m:Label text="Document Date"/>
+									<m:Text text="{path: 'detailView>/sDocumentDate', formatter: '.formatter.formatDate'}"/>
 								</form:content>
 							</form:SimpleForm>
 						</blocks>
@@ -123,36 +110,62 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Suppliers">
+			<ObjectPageSection title="Material">
 				<subSections>
 					<ObjectPageSubSection>
 						<blocks>
-							<m:Table
-								id="suppliersTable"
-								items="{path : 'products>/ProductCollectionStats/Filters/1/values'}">
-								<m:columns>
-									<m:Column/>
-								</m:columns>
-								<m:items>
-									<m:ColumnListItem type="Navigation" press=".onSupplierPress">
-										<m:cells>
-											<m:ObjectIdentifier text="{products>text}"/>
-										</m:cells>
-									</m:ColumnListItem>
-								</m:items>
-							</m:Table>
+							<form:SimpleForm
+								maxContainerCols="2"
+								editable="false"
+								layout="ResponsiveGridLayout"
+								labelSpanL="12"
+								labelSpanM="12"
+								emptySpanL="0"
+								emptySpanM="0"
+								columnsL="1"
+								columnsM="1">
+								<form:content>
+									<m:Label text="Material ID"/>
+									<m:Text text="{items>MaterialID}"/>
+									<m:Label text="Material Text"/>
+									<m:Text text="{detailView>/sMaterialText}"/>
+									<m:Label text="Material Description"/>
+									<m:Text text="{detailView>/sMaterialDescription}"/>
+								</form:content>
+							</form:SimpleForm>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Group">
+				<subSections>
+					<ObjectPageSubSection>
+						<blocks>
+							<form:SimpleForm
+								maxContainerCols="2"
+								editable="false"
+								layout="ResponsiveGridLayout"
+								labelSpanL="12"
+								labelSpanM="12"
+								emptySpanL="0"
+								emptySpanM="0"
+								columnsL="1"
+								columnsM="1">
+								<form:content>
+									<m:Label text="Group ID"/>
+									<m:Text text="{items>GroupID}"/>
+									<m:Label text="Group Text"/>
+									<m:Text text="{detailView>/sGroupText}"/>
+									<m:Label text="Group Description"/>
+									<m:Text text="{detailView>/sGroupDescription}"/>
+								</form:content>
+							</form:SimpleForm>
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
 		</sections>
-
-		<footer>
-			<m:OverflowToolbar>
-				<m:ToolbarSpacer/>
-				<m:Button type="Accept" text="Save"/>
-				<m:Button type="Reject" text="Cancel"/>
-			</m:OverflowToolbar>
-		</footer>
+		
 	</ObjectPageLayout>
 </mvc:View>
