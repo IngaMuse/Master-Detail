@@ -6,29 +6,11 @@
   <content>
     <VBox>
         <VBox>
-            <Label text="Instance"
-                labelFor="idInstanceInput"
-            />
-            <Input
-              value="{items>Instance}"
-              id="idInstanceInput"
-            />
-        </VBox>
-        <VBox>
-            <Label text="ItemID"
-                labelFor="idItemIDInput"
-            />
-            <Input
-              value="{items>ID}"
-              id="idItemIDInput"
-            />
-        </VBox>
-        <VBox>
             <Label text="HeaderlID"
                 labelFor="idHeaderIDInput"
             />
             <Input
-              value="{items>HeaderID}"
+              value="{HeaderID}"
               id="idHeaderIDInput"
             />
         </VBox>
@@ -37,7 +19,7 @@
                 labelFor="idMaterialIDInput"
             />
             <Input
-              value="{items>MaterialID}"
+              value="{MaterialID}"
               id="idMaterialIDInput"
             />
         </VBox>
@@ -46,10 +28,9 @@
                 labelFor="idQuantityInput"
             />
             <Input
-              value="{items>Quantity}"
+              value="{Quantity}"
               id="idQuantityInput"
               type="Number"
-              change=".onQuantityChange"
             />
         </VBox>
         <VBox>
@@ -57,7 +38,7 @@
                 labelFor="idPriceInput"
             />
             <Input
-              value="{items>Price}"
+              value="{Price}"
               id="idPriceInput"
               type="Number"
             />
@@ -67,13 +48,12 @@
 				<DatePicker
 					id='idCreated'
 					value="{
-						'path':'items>Created',
+						'path':'Created',
 						'type':'sap.ui.model.type.Date',
 						'formatOptions': {
 							'pattern': 'yyyy-MM-dd'
 						}
 					}"
-					change='handleChange'
 					class="sapUiSmallMarginBottom"/>
         </VBox>
         <VBox>
@@ -81,7 +61,7 @@
                 labelFor="idCreatedByInput"
             />
             <Input
-              value="{items>CreatedBy}"
+              value="{CreatedBy}"
               id="idCreatedByInput"
             />
         </VBox>
@@ -90,13 +70,12 @@
 				<DatePicker
 					id='idModified'
 					value="{
-						'path':'items>Modified',
+						'path':'Modified',
 						'type':'sap.ui.model.type.Date',
 						'formatOptions': {
 							'pattern': 'yyyy-MM-dd'
 						}
 					}"
-					change='handleChange'
 					class="sapUiSmallMarginBottom"/>
         </VBox>
         <VBox>
@@ -104,7 +83,7 @@
                 labelFor="idModifiedByInput"
             />
             <Input
-              value="{items>ModifiedBy}"
+              value="{ModifiedBy}"
               id="idModifiedByInput"
             />
         </VBox>  
@@ -115,7 +94,7 @@
     <Button
         text="Save"
         type="Emphasized"
-        press='.onPressSave'
+        press=".onPressSave"
     />
     </beginButton>
 
@@ -123,7 +102,7 @@
     <Button
         text="Cancel"
         type="Transparent"
-        press='.onPressCancel'
+        press=".onPressCancel"
     />
     </endButton>
   </Dialog>

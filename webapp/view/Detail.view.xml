@@ -48,6 +48,10 @@
 				</navigationActions>
 
 				<actions>
+				<m:Button
+						text="Delete"
+						type="Emphasized"
+						press="onPressDelete"/>
 					<m:Button
 						text="Стоимость BYN"
 						type="Emphasized"

@@ -36,7 +36,7 @@ sap.ui.define(
           sGroupDescription: "",
         });
         this.getView().setModel(oViewModel, "detailView");
-        
+
         const oCurrencyModel = new JSONModel();
         this.getView().setModel(oCurrencyModel, "currencyData");
       },
@@ -135,11 +135,11 @@ sap.ui.define(
       _parseDate(dateString) {
         const match = dateString.match(/Date\((\d+)/);
         if (match) {
-            const milliseconds = parseInt(match[1], 10);
-            return new Date(milliseconds);
+          const milliseconds = parseInt(match[1], 10);
+          return new Date(milliseconds);
         } else {
-            console.error('Invalid date format:', dateString);
-            return null; 
+          console.error("Invalid date format:", dateString);
+          return null;
         }
       },
 
@@ -152,7 +152,7 @@ sap.ui.define(
       _convertCurrency: function (euroAmount) {
         const oModel = this.getView().getModel("currencyData");
         const sUrl = "https://www.nbrb.by/api/exrates/rates/EUR?parammode=2";
-        oModel.loadData(sUrl);   
+        oModel.loadData(sUrl);
         oModel.attachRequestCompleted(function (oEvent) {
           const data = oModel.getData();
           if (data && data.Cur_OfficialRate) {
@@ -197,6 +197,18 @@ sap.ui.define(
           "/actionButtonsInfo/midColumn/closeColumn"
         );
         this.oRouter.navTo("master", { layout: sNextLayout });
+      },
+
+      onPressDelete: function (oEvent) {
+        const oBindingContext = oEvent.getSource().getBindingContext("items");
+        const oData = oBindingContext.getObject();
+           console.log("Полученные данные:", oData.HeaderID);
+          
+        //   const sKey = this.oModel.createKey("/zjblessons_base_Items", {
+        //     ItemID: oBindingContext.getProperty("ItemID"),
+        //     HeaderID: oBindingContext.getProperty("HeaderID"),
+        //   });
+        // console.log(sKey);
       },
 
       onExit: function () {
