@@ -73,7 +73,6 @@ sap.ui.define(
             id: this.getView().getId(),
           }).then((oDialog) => {
             this.getView().addDependent(oDialog);
-            oDialog.setDraggable(true);
             return oDialog;
           });
         }
@@ -83,9 +82,10 @@ sap.ui.define(
       onDialogBeforeOpen(oEvent) {
         const oDialog = oEvent.getSource();
         const oParams = {
+          ItemID: "0",
           IntegrationID: null
         };
-        const oEntry = this.oModel.createEntry("/tItems", {
+        const oEntry = this.oModel.createEntry("/zjblessons_base_Items", {
           properties: oParams
         });
         oDialog.setBindingContext(oEntry);

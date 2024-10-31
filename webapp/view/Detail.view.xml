@@ -15,13 +15,13 @@
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<expandedHeading>
-					<m:Title text="{items>ItemID}" wrapping="true" class="sapUiSmallMarginEnd"/>
+					<m:Title text="{ItemID}" wrapping="true" class="sapUiSmallMarginEnd"/>
 				</expandedHeading>
 
 				<snappedHeading>
 					<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
 						<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
-							<m:Title text="{items>ItemID}" wrapping="true"/>
+							<m:Title text="{ItemID}" wrapping="true"/>
 						</m:FlexBox>
 					</m:FlexBox>
 				</snappedHeading>
@@ -49,6 +49,10 @@
 
 				<actions>
 				<m:Button
+						text="Edit"
+						type="Emphasized"
+						press="onPressEdit"/>
+				<m:Button
 						text="Delete"
 						type="Transparent"
 						press="onPressDelete"/>
@@ -64,23 +68,23 @@
 			<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Stretch">
 				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
 					<m:Label text="MaterialID"/>
-					<m:Text text="{items>MaterialID}"/>
+					<m:Text text="{MaterialID}"/>
 				</m:VBox>
 				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
 					<m:Label text="GroupID"/>
-					<m:Text text="{items>GroupID}"/>
+					<m:Text text="{GroupID}"/>
 				</m:VBox>
 				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
 					<m:Label text="Price"/>
-					<m:ObjectNumber number="{items>Price} EUR" emphasized="false"/>
+					<m:ObjectNumber number="{Price} EUR" emphasized="false"/>
 				</m:VBox>
 				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
 					<m:Label text="Quantity"/>
-					<m:ObjectNumber number="{items>Quantity}" emphasized="false"/>
+					<m:ObjectNumber number="{Quantity}" emphasized="false"/>
 				</m:VBox>
 				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
 					<m:Label text="Amount"/>
-					<m:ObjectNumber id="AmountID" number="{ parts: [ { path: 'items>Price' }, { path: 'items>Quantity' } ], formatter: '.formatter.calculatePriceQuantity'}" emphasized="false"/>
+					<m:ObjectNumber id="AmountID" number="{ parts: [ { path: 'Price' }, { path: 'Quantity' } ], formatter: '.formatter.calculatePriceQuantity'}" emphasized="false"/>
 				</m:VBox>
 			</m:FlexBox>
 		</headerContent>
@@ -102,7 +106,7 @@
 								columnsM="1">
 								<form:content>
 									<m:Label text="Header ID"/>
-									<m:Text text="{items>HeaderID}"/>
+									<m:Text text="{HeaderID}"/>
 									<m:Label text="Document Number"/>
 									<m:Text text="{detailView>/sDocumentNumber}"/>
 									<m:Label text="Document Date"/>
@@ -130,7 +134,7 @@
 								columnsM="1">
 								<form:content>
 									<m:Label text="Material ID"/>
-									<m:Text text="{items>MaterialID}"/>
+									<m:Text text="{MaterialID}"/>
 									<m:Label text="Material Text"/>
 									<m:Text text="{detailView>/sMaterialText}"/>
 									<m:Label text="Material Description"/>
@@ -158,7 +162,7 @@
 								columnsM="1">
 								<form:content>
 									<m:Label text="Group ID"/>
-									<m:Text text="{items>GroupID}"/>
+									<m:Text text="{GroupID}"/>
 									<m:Label text="Group Text"/>
 									<m:Text text="{detailView>/sGroupText}"/>
 									<m:Label text="Group Description"/>

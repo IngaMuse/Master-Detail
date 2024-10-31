@@ -2,7 +2,7 @@
 	xmlns="sap.m"
 	xmlns:c="sap.ui.core"
 >
-<Dialog class='sapUiContentPadding' beforeOpen="onDialogBeforeOpen" title="Create Item">
+<Dialog class='sapUiContentPadding' beforeOpen="onDialogBeforeOpen" title="Create Item" draggable="true">
   <content>
     <VBox>
         <VBox>
@@ -12,6 +12,7 @@
             <Input
               value="{Instance}"
               id="idInstanceInput"
+              editable="false"
             />
         </VBox>
         <VBox>
@@ -19,8 +20,9 @@
                 labelFor="idItemIDInput"
             />
             <Input
-              value="{ID}"
+              value="{ItemID}"
               id="idItemIDInput"
+              editable="false"
             />
         </VBox>
         <VBox>
@@ -30,6 +32,7 @@
             <Input
               value="{HeaderID}"
               id="idHeaderIDInput"
+              editable="{detailView>/bEditMode}"
             />
         </VBox>
           <VBox>

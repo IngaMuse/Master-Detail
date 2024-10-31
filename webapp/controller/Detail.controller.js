@@ -4,9 +4,10 @@ sap.ui.define(
     "sap/ui/model/json/JSONModel",
     "sap/m/MessageToast",
     "sap/m/MessageBox",
+    "sap/ui/core/Fragment",
     "sap/ui/demo/fiori2/model/formatter",
   ],
-  function (Controller, JSONModel, MessageToast, MessageBox, formatter) {
+  function (Controller, JSONModel, MessageToast, MessageBox, Fragment, formatter) {
     "use strict";
 
     return Controller.extend("sap.ui.demo.fiori2.controller.Detail", {
@@ -40,6 +41,10 @@ sap.ui.define(
 
         const oCurrencyModel = new JSONModel();
         this.getView().setModel(oCurrencyModel, "currencyData");
+        const oViewDetailModel = new JSONModel({
+          bEditMode: true
+        });
+        this.getView().setModel(oViewDetailModel, "detailView");
       },
 
       _onProductMatched: function (oEvent) {
@@ -50,7 +55,6 @@ sap.ui.define(
         this._getDetailData(this._item, "GroupID");
         this.getView().bindElement({
           path: "/" + this._item,
-          model: "items",
         });
       },
 
@@ -201,12 +205,13 @@ sap.ui.define(
       },
 
       onPressDelete: function (oEvent) {
-        const oBindingContext = oEvent.getSource().getBindingContext("items");
+        const oBindingContext = oEvent.getSource().getBindingContext();
         const oData = oBindingContext.getObject();
         const sKey = this.oModel.createKey("/zjblessons_base_Items", {
           ItemID: oData.ItemID,
           HeaderID: oData.HeaderID,
         });
+        console.log(sKey);
         sap.m.MessageBox.warning(
           "Do you really want to delete this entry?",
           {
@@ -216,19 +221,58 @@ sap.ui.define(
               if (oAction === sap.m.MessageBox.Action.OK) {         
                 this.oModel.remove(sKey, {
                   success: () => {
-                    debugger;
                     MessageToast.show(`Item ${oData.ItemID} was successfully deleted`, { at: "center center" })
                     sap.ui.getCore().getEventBus().publish("Master", "Refresh");
                     this.oRouter.navTo("master");
                   },
                   error: (oError) => {
-                    MessageBox.error(`${oError}. Item ${oData.ItemID} was not deleted`, { at: "center center" });
+                    MessageBox.error(`Item ${oData.ItemID} was not deleted`, { at: "center center" });
                   }
                 });
               };
             }.bind(this),
           }
         );
+      },
+
+      onPressEdit: function (oEvent) {
+        this._loadEditDialog(oEvent);
+      },
+
+      _loadEditDialog: async function (oEvent) {
+
+        const oModel = this.getView().getModel("detailView");
+        oModel.setProperty("/bEditMode", false);
+        const oItem = oEvent.getSource().getBindingContext();
+        if (!this._oDialog) {
+          this._oDialog = await Fragment.load({
+            name: "sap.ui.demo.fiori2.view.fragment.CreateDialog",
+            controller: this,
+            id: this.getView().getId(),
+          }).then((oDialog) => {
+            oDialog.setTitle("Edit Dialog")
+            this.getView().addDependent(oDialog);
+            oDialog.setBindingContext(oItem);
+            
+            return oDialog;
+          });
+        }
+        this._oDialog.open();
+      },
+
+      onPressCancel() {
+        this.oModel.resetChanges();
+        this._oDialog.destroy();
+      },
+
+      onPressSave(oEvent) {
+        this.oModel.submitChanges({
+          success: () => {
+            sap.ui.getCore().getEventBus().publish("Master", "Refresh");
+            this.oRouter.navTo("master");
+          },
+        });
+        this._oDialog.destroy();
       },
 
       onExit: function () {
