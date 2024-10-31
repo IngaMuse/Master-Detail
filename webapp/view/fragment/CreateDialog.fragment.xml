@@ -6,6 +6,24 @@
   <content>
     <VBox>
         <VBox>
+            <Label text="Instance"
+                labelFor="idInstanceInput"
+            />
+            <Input
+              value="{Instance}"
+              id="idInstanceInput"
+            />
+        </VBox>
+        <VBox>
+            <Label text="ItemID"
+                labelFor="idItemIDInput"
+            />
+            <Input
+              value="{ID}"
+              id="idItemIDInput"
+            />
+        </VBox>
+        <VBox>
             <Label text="HeaderlID"
                 labelFor="idHeaderIDInput"
             />

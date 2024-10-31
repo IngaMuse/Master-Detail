@@ -3,9 +3,10 @@ sap.ui.define(
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
     "sap/m/MessageToast",
+    "sap/m/MessageBox",
     "sap/ui/demo/fiori2/model/formatter",
   ],
-  function (Controller, JSONModel, MessageToast, formatter) {
+  function (Controller, JSONModel, MessageToast, MessageBox, formatter) {
     "use strict";
 
     return Controller.extend("sap.ui.demo.fiori2.controller.Detail", {
@@ -14,7 +15,7 @@ sap.ui.define(
       onInit: function () {
         this.oOwnerComponent = this.getOwnerComponent();
         this.oRouter = this.oOwnerComponent.getRouter();
-        this.oModel = this.oOwnerComponent.getModel("items");
+        this.oModel = this.oOwnerComponent.getModel();
         this.oItemModel = this.oOwnerComponent.getModel("component");
 
         this.oRouter
@@ -202,13 +203,32 @@ sap.ui.define(
       onPressDelete: function (oEvent) {
         const oBindingContext = oEvent.getSource().getBindingContext("items");
         const oData = oBindingContext.getObject();
-           console.log("Полученные данные:", oData.HeaderID);
-          
-        //   const sKey = this.oModel.createKey("/zjblessons_base_Items", {
-        //     ItemID: oBindingContext.getProperty("ItemID"),
-        //     HeaderID: oBindingContext.getProperty("HeaderID"),
-        //   });
-        // console.log(sKey);
+        const sKey = this.oModel.createKey("/zjblessons_base_Items", {
+          ItemID: oData.ItemID,
+          HeaderID: oData.HeaderID,
+        });
+        sap.m.MessageBox.warning(
+          "Do you really want to delete this entry?",
+          {
+            title: "Delete confirmation",
+            actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
+            onClose: function (oAction) {
+              if (oAction === sap.m.MessageBox.Action.OK) {         
+                this.oModel.remove(sKey, {
+                  success: () => {
+                    debugger;
+                    MessageToast.show(`Item ${oData.ItemID} was successfully deleted`, { at: "center center" })
+                    sap.ui.getCore().getEventBus().publish("Master", "Refresh");
+                    this.oRouter.navTo("master");
+                  },
+                  error: (oError) => {
+                    MessageBox.error(`${oError}. Item ${oData.ItemID} was not deleted`, { at: "center center" });
+                  }
+                });
+              };
+            }.bind(this),
+          }
+        );
       },
 
       onExit: function () {

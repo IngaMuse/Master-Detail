@@ -29,6 +29,7 @@ sap.ui.define(
           sCount: "0",
         });
         this.getView().setModel(oViewModel, "masterView");
+        sap.ui.getCore().getEventBus().subscribe("Master", "Refresh", this._loadData, this);
       },
 
       onBeforeRendering: function () {
@@ -82,10 +83,9 @@ sap.ui.define(
       onDialogBeforeOpen(oEvent) {
         const oDialog = oEvent.getSource();
         const oParams = {
-          ItemID: "0",
           IntegrationID: null
         };
-        const oEntry = this.oModel.createEntry("/zjblessons_base_Items", {
+        const oEntry = this.oModel.createEntry("/tItems", {
           properties: oParams
         });
         oDialog.setBindingContext(oEntry);
@@ -97,7 +97,6 @@ sap.ui.define(
       },
 
       onPressSave(oEvent) {
-        this.oModel.getPendingChanges();
         this.oModel.submitChanges({
           success: () => {
             this._loadData();
@@ -111,11 +110,11 @@ sap.ui.define(
         oTable.getBinding("items").refresh();
         oTable.getModel().read("/zjblessons_base_Items", {
           success: function (oData) {
-            this._getTableCounter();
           },
           error: function (oError) {
           },
         });
+        this._getTableCounter();
       },
 
       onSort: function () {

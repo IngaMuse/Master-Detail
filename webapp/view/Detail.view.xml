@@ -50,7 +50,7 @@
 				<actions>
 				<m:Button
 						text="Delete"
-						type="Emphasized"
+						type="Transparent"
 						press="onPressDelete"/>
 					<m:Button
 						text="Стоимость BYN"
