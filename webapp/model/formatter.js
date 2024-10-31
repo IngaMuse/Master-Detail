@@ -4,7 +4,7 @@ sap.ui.define([], function () {
   return {
     calculatePriceQuantity: function (price, quantity) {
       if (price && quantity) {
-        return price * quantity + " EUR";
+        return (price * quantity).toFixed(2) + " EUR";
       }
       return "0 EUR";
     },

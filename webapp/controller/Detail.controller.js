@@ -7,7 +7,14 @@ sap.ui.define(
     "sap/ui/core/Fragment",
     "sap/ui/demo/fiori2/model/formatter",
   ],
-  function (Controller, JSONModel, MessageToast, MessageBox, Fragment, formatter) {
+  function (
+    Controller,
+    JSONModel,
+    MessageToast,
+    MessageBox,
+    Fragment,
+    formatter
+  ) {
     "use strict";
 
     return Controller.extend("sap.ui.demo.fiori2.controller.Detail", {
@@ -42,7 +49,7 @@ sap.ui.define(
         const oCurrencyModel = new JSONModel();
         this.getView().setModel(oCurrencyModel, "currencyData");
         const oViewDetailModel = new JSONModel({
-          bEditMode: true
+          bEditMode: true,
         });
         this.getView().setModel(oViewDetailModel, "detailView");
       },
@@ -211,36 +218,68 @@ sap.ui.define(
           ItemID: oData.ItemID,
           HeaderID: oData.HeaderID,
         });
-        console.log(sKey);
-        sap.m.MessageBox.warning(
-          "Do you really want to delete this entry?",
-          {
-            title: "Delete confirmation",
-            actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
-            onClose: function (oAction) {
-              if (oAction === sap.m.MessageBox.Action.OK) {         
-                this.oModel.remove(sKey, {
-                  success: () => {
-                    MessageToast.show(`Item ${oData.ItemID} was successfully deleted`, { at: "center center" })
-                    sap.ui.getCore().getEventBus().publish("Master", "Refresh");
-                    this.oRouter.navTo("master");
-                  },
-                  error: (oError) => {
-                    MessageBox.error(`Item ${oData.ItemID} was not deleted`, { at: "center center" });
-                  }
-                });
-              };
-            }.bind(this),
-          }
-        );
+        sap.m.MessageBox.warning("Do you really want to delete this entry?", {
+          title: "Delete confirmation",
+          actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
+          onClose: function (oAction) {
+            if (oAction === sap.m.MessageBox.Action.OK) {
+              this.oModel.remove(sKey, {
+                success: () => {
+                  MessageToast.show(
+                    `Item ${oData.ItemID} was successfully deleted`,
+                    { at: "center center" }
+                  );
+                  sap.ui.getCore().getEventBus().publish("Master", "Refresh");
+                  this.oRouter.navTo("master");
+                },
+                error: (oError) => {
+                  MessageBox.error(`Item ${oData.ItemID} was not deleted`, {
+                    at: "center center",
+                  });
+                },
+              });
+            }
+          }.bind(this),
+        });
       },
 
       onPressEdit: function (oEvent) {
         this._loadEditDialog(oEvent);
       },
 
-      _loadEditDialog: async function (oEvent) {
+      // _loadEditDialog: async function (oEvent) {
+      //   const oModel = this.getView().getModel("detailView");
+      //   oModel.setProperty("/bEditMode", false);
+      //   const oItem = oEvent.getSource().getBindingContext();
+      //   if (!this._oDialog) {
+      //     try {
+      //       this._oDialog = await Fragment.load({
+      //         name: "sap.ui.demo.fiori2.view.fragment.CreateDialog",
+      //         controller: this,
+      //         id: this.getView().getId() + "--createDialog",
+      //       });
+      //       this.getView().addDependent(this._oDialog);
+      //       this._oDialog.setTitle("Edit Dialog");
+      //       this._oDialog.setBindingContext(oItem);
+      //       this._oDialog.open();
+      //       this._oDialog.attachBeforeOpen(
+      //         function () {
+      //           const oInput = this._oDialog.getContent()[0].getItems()[0];
+      //           if (oInput) {
+      //             oInput.focus();
+      //           }
+      //         }.bind(this)
+      //       );
+      //     } catch (error) {
+      //       console.error("Ошибка при загрузке фрагмента:", error);
+      //     }
+      //   } else {
+      //     this._oDialog.setBindingContext(oItem);
+      //     this._oDialog.open();
+      //   }
+      // },
 
+      _loadEditDialog: async function (oEvent) {
         const oModel = this.getView().getModel("detailView");
         oModel.setProperty("/bEditMode", false);
         const oItem = oEvent.getSource().getBindingContext();
@@ -250,29 +289,42 @@ sap.ui.define(
             controller: this,
             id: this.getView().getId(),
           }).then((oDialog) => {
-            oDialog.setTitle("Edit Dialog")
             this.getView().addDependent(oDialog);
+            oDialog.setTitle("Edit Dialog");
             oDialog.setBindingContext(oItem);
-            
+            oDialog.open();
             return oDialog;
           });
+        } else {
+          this._oDialog.setBindingContext(oItem);
+          this._oDialog.open();
         }
-        this._oDialog.open();
       },
 
       onPressCancel() {
         this.oModel.resetChanges();
-        this._oDialog.destroy();
+        this._oDialog.close();
       },
 
       onPressSave(oEvent) {
-        this.oModel.submitChanges({
-          success: () => {
-            sap.ui.getCore().getEventBus().publish("Master", "Refresh");
-            this.oRouter.navTo("master");
-          },
-        });
-        this._oDialog.destroy();
+        const oPendingChanges = this.oModel.getPendingChanges(),
+          sPath = this.getView().getBindingContext().getPath().slice(1);
+        if (oPendingChanges.hasOwnProperty(sPath)) {
+          this.oModel.submitChanges({
+            success: () => {
+              MessageToast.show(`Item was successfully changed`, {
+                at: "center center",
+              });
+              this.oModel.refresh();
+              this._oDialog.close();
+            },
+            error: (oError) => {
+              MessageBox.error(`Item was not changed`, { at: "center center" });
+            },
+          });
+        } else {
+          this._oDialog.close();
+        }
       },
 
       onExit: function () {

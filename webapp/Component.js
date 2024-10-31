@@ -18,7 +18,7 @@ sap.ui.define([
 			const sServiceUrl = this.getManifestEntry("sap.app").dataSources.mainService.uri,
 				oModel = new ODataModel(sServiceUrl, {
 					json: true,
-					loadMetadataAsync: true
+					loadMetadataAsync: true,
 				})
 			this.setModel(oModel, "items");
 			const oItemModel = new JSONModel();
