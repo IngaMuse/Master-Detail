@@ -1,68 +1,340 @@
-sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function (Controller) {
-	"use strict";
+sap.ui.define(
+  [
+    "sap/ui/core/mvc/Controller",
+    "sap/ui/model/json/JSONModel",
+    "sap/m/MessageToast",
+    "sap/m/MessageBox",
+    "sap/ui/core/Fragment",
+    "sap/ui/demo/fiori2/model/formatter",
+  ],
+  function (
+    Controller,
+    JSONModel,
+    MessageToast,
+    MessageBox,
+    Fragment,
+    formatter
+  ) {
+    "use strict";
 
-	return Controller.extend("sap.ui.demo.fiori2.controller.Detail", {
-		onInit: function () {
-			this.oOwnerComponent = this.getOwnerComponent();
+    return Controller.extend("sap.ui.demo.fiori2.controller.Detail", {
+      formatter: formatter,
 
-			this.oRouter = this.oOwnerComponent.getRouter();
-			this.oModel = this.oOwnerComponent.getModel();
+      onInit: function () {
+        this.oOwnerComponent = this.getOwnerComponent();
+        this.oRouter = this.oOwnerComponent.getRouter();
+        this.oModel = this.oOwnerComponent.getModel();
+        this.oItemModel = this.oOwnerComponent.getModel("component");
 
-			this.oRouter.getRoute("master").attachPatternMatched(this._onProductMatched, this);
-			this.oRouter.getRoute("detail").attachPatternMatched(this._onProductMatched, this);
-			this.oRouter.getRoute("detailDetail").attachPatternMatched(this._onProductMatched, this);
-		},
+        this.oRouter
+          .getRoute("master")
+          .attachPatternMatched(this._onProductMatched, this);
+        this.oRouter
+          .getRoute("detail")
+          .attachPatternMatched(this._onProductMatched, this);
+        this.oRouter
+          .getRoute("detailDetail")
+          .attachPatternMatched(this._onProductMatched, this);
 
-		onSupplierPress: function (oEvent) {
-			var supplierPath = oEvent.getSource().getBindingContext("products").getPath(),
-				supplier = supplierPath.split("/").slice(-1).pop(),
-				oNextUIState;
+        const oViewModel = new JSONModel({
+          sDocumentNumber: "",
+          sDocumentDate: "",
+          sMaterialText: "",
+          sMaterialDescription: "",
+          sGroupText: "",
+          sGroupDescription: "",
+        });
+        this.getView().setModel(oViewModel, "detailView");
 
-			this.oOwnerComponent.getHelper().then(function (oHelper) {
-				oNextUIState = oHelper.getNextUIState(2);
-				this.oRouter.navTo("detailDetail", {
-					layout: oNextUIState.layout,
-					supplier: supplier,
-					product: this._product
-				});
-			}.bind(this));
-		},
+        const oCurrencyModel = new JSONModel();
+        this.getView().setModel(oCurrencyModel, "currencyData");
+        const oViewDetailModel = new JSONModel({
+          bEditMode: true,
+        });
+        this.getView().setModel(oViewDetailModel, "detailView");
+      },
 
-		_onProductMatched: function (oEvent) {
-			this._product = oEvent.getParameter("arguments").product || this._product || "0";
-			this.getView().bindElement({
-				path: "/ProductCollection/" + this._product,
-				model: "products"
-			});
-		},
+      _onProductMatched: function (oEvent) {
+        this._item =
+          oEvent.getParameter("arguments").product || this._item || "0";
+        this._getDetailData(this._item, "HeaderID");
+        this._getDetailData(this._item, "MaterialID");
+        this._getDetailData(this._item, "GroupID");
+        this.getView().bindElement({
+          path: "/" + this._item,
+        });
+      },
 
-		onEditToggleButtonPress: function() {
-			var oObjectPage = this.getView().byId("ObjectPageLayout"),
-				bCurrentShowFooterState = oObjectPage.getShowFooter();
+      _getDetailData: function (itemID, typeEssence) {
+        this.oModel.read(`/${itemID}/${typeEssence}`, {
+          success: (oData) => {
+            const sData = Object.values(oData)[0];
+            switch (typeEssence) {
+              case "HeaderID":
+                const sHeaderPath = this.oModel.createKey(
+                  "zjblessons_base_Headers",
+                  {
+                    HeaderID: sData,
+                  }
+                );
+                this._setPropertyDataDetail(sHeaderPath, "DocumentNumber");
+                this._setPropertyDataDetail(sHeaderPath, "DocumentDate");
+                break;
+              case "MaterialID":
+                const sMaterialPath = this.oModel.createKey(
+                  "zjblessons_base_Materials",
+                  {
+                    MaterialID: sData,
+                  }
+                );
+                this._setPropertyDataDetail(sMaterialPath, "MaterialText");
+                this._setPropertyDataDetail(
+                  sMaterialPath,
+                  "MaterialDescription"
+                );
+                break;
+              case "GroupID":
+                const sGroupPath = this.oModel.createKey(
+                  "zjblessons_base_Groups",
+                  {
+                    GroupID: sData,
+                  }
+                );
+                this._setPropertyDataDetail(sGroupPath, "GroupText");
+                this._setPropertyDataDetail(sGroupPath, "GroupDescription");
+                break;
+            }
+          },
+        });
+      },
 
-			oObjectPage.setShowFooter(!bCurrentShowFooterState);
-		},
+      _getDetailDataObject: function (sObjectPath) {
+        return new Promise((resolve, reject) => {
+          this.oModel.read(sObjectPath, {
+            success: (oData) => {
+              const sData = Object.values(oData)[0];
+              resolve(sData);
+            },
+            error: (oError) => {
+              reject(oError);
+            },
+          });
+        });
+      },
 
-		handleFullScreen: function () {
-			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/fullScreen");
-			this.oRouter.navTo("detail", {layout: sNextLayout, product: this._product});
-		},
+      _setPropertyDataDetail(sObjectPath, sDataField) {
+        const sPathDataField = `/${sObjectPath}/${sDataField}`;
+        this._getDetailDataObject(sPathDataField)
+          .then((oData) => {
+            if (oData.startsWith("/Date(")) {
+              oData = this._parseDate(oData);
+            }
+            this.getView()
+              .getModel("detailView")
+              .setProperty(`/s${sDataField}`, oData);
+          })
+          .catch((error) => {
+            console.error(
+              `Ошибка при получении данных ${sDataField}, попробуй другой item:`,
+              error
+            );
+            this.getView()
+              .getModel("detailView")
+              .setProperty(`/s${sDataField}`, "");
+          });
+      },
 
-		handleExitFullScreen: function () {
-			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/exitFullScreen");
-			this.oRouter.navTo("detail", {layout: sNextLayout, product: this._product});
-		},
+      _parseDate(dateString) {
+        const match = dateString.match(/Date\((\d+)/);
+        if (match) {
+          const milliseconds = parseInt(match[1], 10);
+          return new Date(milliseconds);
+        } else {
+          console.error("Invalid date format:", dateString);
+          return null;
+        }
+      },
 
-		handleClose: function () {
-			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/closeColumn");
-			this.oRouter.navTo("master", {layout: sNextLayout});
-		},
+      onAmountBYNButtonPress: function () {
+        const objectNumber = this.getView().byId("AmountID");
+        const euroAmount = objectNumber.getNumber().slice(0, -4);
+        this._convertCurrency(euroAmount);
+      },
 
-		onExit: function () {
-			this.oRouter.getRoute("master").detachPatternMatched(this._onProductMatched, this);
-			this.oRouter.getRoute("detail").detachPatternMatched(this._onProductMatched, this);
-		}
-	});
-});
+      _convertCurrency: function (euroAmount) {
+        const oModel = this.getView().getModel("currencyData");
+        const sUrl = "https://www.nbrb.by/api/exrates/rates/EUR?parammode=2";
+        oModel.loadData(sUrl);
+        oModel.attachRequestCompleted(function (oEvent) {
+          const data = oModel.getData();
+          if (data && data.Cur_OfficialRate) {
+            var rate = data.Cur_OfficialRate;
+            var bynAmount = euroAmount * rate;
+            MessageToast.show(
+              "Стоимость всех товаров в белорусских рублях: " +
+                bynAmount.toFixed(2),
+              { at: "center center" }
+            );
+          } else {
+            MessageToast.show("Ошибка получения курса.");
+          }
+        });
+        oModel.attachRequestFailed(function () {
+          MessageToast.show("Ошибка при обращении к API НБРБ.");
+        });
+      },
+
+      handleFullScreen: function () {
+        var sNextLayout = this.oItemModel.getProperty(
+          "/actionButtonsInfo/midColumn/fullScreen"
+        );
+        this.oRouter.navTo("detail", {
+          layout: sNextLayout,
+          product: this._item,
+        });
+      },
+
+      handleExitFullScreen: function () {
+        var sNextLayout = this.oItemModel.getProperty(
+          "/actionButtonsInfo/midColumn/exitFullScreen"
+        );
+        this.oRouter.navTo("detail", {
+          layout: sNextLayout,
+          product: this._item,
+        });
+      },
+
+      handleClose: function () {
+        var sNextLayout = this.oItemModel.getProperty(
+          "/actionButtonsInfo/midColumn/closeColumn"
+        );
+        this.oRouter.navTo("master", { layout: sNextLayout });
+      },
+
+      onPressDelete: function (oEvent) {
+        const oBindingContext = oEvent.getSource().getBindingContext();
+        const oData = oBindingContext.getObject();
+        const sKey = this.oModel.createKey("/zjblessons_base_Items", {
+          ItemID: oData.ItemID,
+          HeaderID: oData.HeaderID,
+        });
+        sap.m.MessageBox.warning("Do you really want to delete this entry?", {
+          title: "Delete confirmation",
+          actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
+          onClose: function (oAction) {
+            if (oAction === sap.m.MessageBox.Action.OK) {
+              this.oModel.remove(sKey, {
+                success: () => {
+                  MessageToast.show(
+                    `Item ${oData.ItemID} was successfully deleted`,
+                    { at: "center center" }
+                  );
+                  sap.ui.getCore().getEventBus().publish("Master", "Refresh");
+                  this.oRouter.navTo("master");
+                },
+                error: (oError) => {
+                  MessageBox.error(`Item ${oData.ItemID} was not deleted`, {
+                    at: "center center",
+                  });
+                },
+              });
+            }
+          }.bind(this),
+        });
+      },
+
+      onPressEdit: function (oEvent) {
+        this._loadEditDialog(oEvent);
+      },
+
+      // _loadEditDialog: async function (oEvent) {
+      //   const oModel = this.getView().getModel("detailView");
+      //   oModel.setProperty("/bEditMode", false);
+      //   const oItem = oEvent.getSource().getBindingContext();
+      //   if (!this._oDialog) {
+      //     try {
+      //       this._oDialog = await Fragment.load({
+      //         name: "sap.ui.demo.fiori2.view.fragment.CreateDialog",
+      //         controller: this,
+      //         id: this.getView().getId() + "--createDialog",
+      //       });
+      //       this.getView().addDependent(this._oDialog);
+      //       this._oDialog.setTitle("Edit Dialog");
+      //       this._oDialog.setBindingContext(oItem);
+      //       this._oDialog.open();
+      //       this._oDialog.attachBeforeOpen(
+      //         function () {
+      //           const oInput = this._oDialog.getContent()[0].getItems()[0];
+      //           if (oInput) {
+      //             oInput.focus();
+      //           }
+      //         }.bind(this)
+      //       );
+      //     } catch (error) {
+      //       console.error("Ошибка при загрузке фрагмента:", error);
+      //     }
+      //   } else {
+      //     this._oDialog.setBindingContext(oItem);
+      //     this._oDialog.open();
+      //   }
+      // },
+
+      _loadEditDialog: async function (oEvent) {
+        const oModel = this.getView().getModel("detailView");
+        oModel.setProperty("/bEditMode", false);
+        const oItem = oEvent.getSource().getBindingContext();
+        if (!this._oDialog) {
+          this._oDialog = await Fragment.load({
+            name: "sap.ui.demo.fiori2.view.fragment.CreateDialog",
+            controller: this,
+            id: this.getView().getId(),
+          }).then((oDialog) => {
+            this.getView().addDependent(oDialog);
+            oDialog.setTitle("Edit Dialog");
+            oDialog.setBindingContext(oItem);
+            oDialog.open();
+            return oDialog;
+          });
+        } else {
+          this._oDialog.setBindingContext(oItem);
+          this._oDialog.open();
+        }
+      },
+
+      onPressCancel() {
+        this.oModel.resetChanges();
+        this._oDialog.close();
+      },
+
+      onPressSave(oEvent) {
+        const oPendingChanges = this.oModel.getPendingChanges(),
+          sPath = this.getView().getBindingContext().getPath().slice(1);
+        if (oPendingChanges.hasOwnProperty(sPath)) {
+          this.oModel.submitChanges({
+            success: () => {
+              MessageToast.show(`Item was successfully changed`, {
+                at: "center center",
+              });
+              this.oModel.refresh();
+              this._oDialog.close();
+            },
+            error: (oError) => {
+              MessageBox.error(`Item was not changed`, { at: "center center" });
+            },
+          });
+        } else {
+          this._oDialog.close();
+        }
+      },
+
+      onExit: function () {
+        this.oRouter
+          .getRoute("master")
+          .detachPatternMatched(this._onProductMatched, this);
+        this.oRouter
+          .getRoute("detail")
+          .detachPatternMatched(this._onProductMatched, this);
+      },
+    });
+  }
+);

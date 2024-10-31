@@ -1,0 +1,130 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+>
+<Dialog class='sapUiContentPadding' beforeOpen="onDialogBeforeOpen" title="Create Item" draggable="true">
+  <content>
+    <VBox>
+        <VBox>
+            <Label text="Instance"
+                labelFor="idInstanceInput"
+            />
+            <Input
+              value="{Instance}"
+              id="idInstanceInput"
+              editable="false"
+            />
+        </VBox>
+        <VBox>
+            <Label text="ItemID"
+                labelFor="idItemIDInput"
+            />
+            <Input
+              value="{ItemID}"
+              id="idItemIDInput"
+              editable="false"
+            />
+        </VBox>
+        <VBox>
+            <Label text="HeaderlID"
+                labelFor="idHeaderIDInput"
+            />
+            <Input
+              value="{HeaderID}"
+              id="idHeaderIDInput"
+              editable="{detailView>/bEditMode}"
+            />
+        </VBox>
+          <VBox>
+            <Label text="MaterialID"
+                labelFor="idMaterialIDInput"
+            />
+            <Input
+              value="{MaterialID}"
+              id="idMaterialIDInput"
+            />
+        </VBox>
+          <VBox>
+            <Label text="Quantity"
+                labelFor="idQuantityInput"
+            />
+            <Input
+              value="{Quantity}"
+              id="idQuantityInput"
+              type="Number"
+            />
+        </VBox>
+        <VBox>
+            <Label text="Price"
+                labelFor="idPriceInput"
+            />
+            <Input
+              value="{Price}"
+              id="idPriceInput"
+              type="Number"
+            />
+        </VBox>
+        <VBox>
+        <Label text="Created" labelFor="idCreated"/>
+				<DatePicker
+					id='idCreated'
+					value="{
+						'path':'Created',
+						'type':'sap.ui.model.type.Date',
+						'formatOptions': {
+							'pattern': 'yyyy-MM-dd'
+						}
+					}"
+					class="sapUiSmallMarginBottom"/>
+        </VBox>
+        <VBox>
+            <Label text="CreatedBy"
+                labelFor="idCreatedByInput"
+            />
+            <Input
+              value="{CreatedBy}"
+              id="idCreatedByInput"
+            />
+        </VBox>
+        <VBox>
+        <Label text="Modified" labelFor="idModified"/>
+				<DatePicker
+					id='idModified'
+					value="{
+						'path':'Modified',
+						'type':'sap.ui.model.type.Date',
+						'formatOptions': {
+							'pattern': 'yyyy-MM-dd'
+						}
+					}"
+					class="sapUiSmallMarginBottom"/>
+        </VBox>
+        <VBox>
+            <Label text="ModifiedBy"
+                labelFor="idModifiedByInput"
+            />
+            <Input
+              value="{ModifiedBy}"
+              id="idModifiedByInput"
+            />
+        </VBox>  
+    </VBox>
+  </content>
+    
+    <beginButton>
+    <Button
+        text="Save"
+        type="Emphasized"
+        press=".onPressSave"
+    />
+    </beginButton>
+
+    <endButton>
+    <Button
+        text="Cancel"
+        type="Transparent"
+        press=".onPressCancel"
+    />
+    </endButton>
+  </Dialog>
+</c:FragmentDefinition>
